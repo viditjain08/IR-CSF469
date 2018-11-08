@@ -98,6 +98,10 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
+
+idf.pkl
+invertedindex.pkl
+tfidf.pkl
 /site
 
 # mypy

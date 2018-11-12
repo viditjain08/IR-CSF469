@@ -30,13 +30,13 @@ def tfidf():
     invertedindex={}
     tf={}
     count=0
-    print "Total Documents", len(l)
+    print("Total Documents", len(l))
     for i in l:
         length=0
         temp_tokens = tokenize(open(i).read())
         tf[i]={}
-        for k,v in temp_tokens.items():
-            if k not in invertedindex.keys():
+        for k,v in list(temp_tokens.items()):
+            if k not in list(invertedindex.keys()):
                 invertedindex[k] = {i:v}
             else:
                 invertedindex[k][i]=v
@@ -46,7 +46,7 @@ def tfidf():
         tf[i]["length"]=length
         count+=1
         if count%1000==0:
-            print count, "documents indexed"
+            print(count, "documents indexed")
         # print invertedindex
         # print tf
     return invertedindex,tf

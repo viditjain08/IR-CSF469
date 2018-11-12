@@ -12,7 +12,7 @@ if __name__ == "__main__":
         print("1. Make the dict")
         print("2. Search a query")
         print("3. Exit")
-        option=int(raw_input())
+        option=int(input())
         if option==3:
             break
         if option==1:
@@ -21,7 +21,7 @@ if __name__ == "__main__":
             invi.get_inverted_tfidf()
         else:
             print("Enter query")
-            query=str(raw_input())
+            query=str(input())
             if query is None or len(query)==0:
                 print("Query cannot be empty")
                 continue
@@ -40,9 +40,9 @@ if __name__ == "__main__":
                         flag=-1
                         break
                     if flag==0:
-                        l=invertedindex[q].keys()
+                        l=list(invertedindex[q].keys())
                     else:
-                        l1 = [value for value in l if value in invertedindex[q].keys()]
+                        l1 = [value for value in l if value in list(invertedindex[q].keys())]
                         l=l1
                         if len(l)==0:
                             print("No results found")
@@ -63,8 +63,8 @@ if __name__ == "__main__":
                 results = sorted(docs,reverse=True)[:20]
                 for score,doc in results:
                     f=open("corpora/reuters/training/"+doc)
-                    print(f.readline()),
-                    print("Score: "),score
-                    print(f.read()),
+                    print((f.readline()), end=' ')
+                    print(("Score: "),score)
+                    print((f.read()), end=' ')
             except:
                 print("Dict not built/ Some error")

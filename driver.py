@@ -3,68 +3,55 @@ import invertedindex as invi
 import pickle
 from nltk import word_tokenize, pos_tag
 from nltk.stem import WordNetLemmatizer
+import get_results as gr
 
 if __name__ == "__main__":
     option=0
     wnl = WordNetLemmatizer()
-    while option!=3:
+    flag=0
+    while option!=4:
         print("Choose among the following")
         print("1. Make the dict")
         print("2. Search a query")
-        print("3. Exit")
+        print("3. Make a modified query with embeddings")
+        print("4. Exit")
         option=int(input())
-        if option==3:
+        if option==4:
             break
         if option==1:
             print("This may take between 1-2 hours")
             idf.get_idf()
             invi.get_inverted_tfidf()
-        else:
+        elif option==2:
             print("Enter query")
             query=str(input())
             if query is None or len(query)==0:
                 print("Query cannot be empty")
                 continue
-            try:
-                invertedindex = pickle.load(open("invertedindex.pkl","rb"))
-                tfidf = pickle.load(open("tfidf.pkl","rb"))
-                l = []
-                flag=0
-                for i,j in pos_tag(word_tokenize(query.lower())):
-                    if j[0].lower() in ['a','n','v']:
-                        q = wnl.lemmatize(i,j[0].lower())
-                    else:
-                        q = wnl.lemmatize(i)
-                    if q not in invertedindex:
-                        print("No results found")
-                        flag=-1
-                        break
-                    if flag==0:
-                        l=list(invertedindex[q].keys())
-                    else:
-                        l1 = [value for value in l if value in list(invertedindex[q].keys())]
-                        l=l1
-                        if len(l)==0:
-                            print("No results found")
-                            continue
-                    flag=1
-                docs=[]
-                if flag==-1:
-                    continue
-                for doc in l:
-                    score=0
-                    for i,j in pos_tag(word_tokenize(query.lower())):
-                        if j[0].lower() in ['a','n','v']:
-                            q = wnl.lemmatize(i,j[0].lower())
-                        else:
-                            q = wnl.lemmatize(i)
-                        score+=tfidf[doc][q]
-                    docs.append((score,doc))
-                results = sorted(docs,reverse=True)[:20]
-                for score,doc in results:
-                    f=open("corpora/reuters/training/"+doc)
-                    print((f.readline()), end=' ')
-                    print(("Score: "),score)
-                    print((f.read()), end=' ')
-            except:
-                print("Dict not built/ Some error")
+            docs = gr.simple_results(query)
+            if docs==-1:
+                print("Some error occured")
+                continue
+            if docs==[]:
+                print("No results found")
+                continue
+            gr.print_results(docs,query)
+        else:
+            if flag==0:
+                print("May take 5 minutes")
+                model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
+            flag=1
+            print("Enter query")
+            query=str(input())
+            if query is None or len(query)==0:
+                print("Query cannot be empty")
+                continue
+            added_vocab = gr.query_expansion(query, model)
+            docs = gr.simple_results(query,added_vocab[:2])
+            if docs==-1:
+                print("Some error occured")
+                continue
+            if docs==[]:
+                print("No results found")
+                continue
+            gr.print_results(docs,query)

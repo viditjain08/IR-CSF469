@@ -102,6 +102,8 @@ venv.bak/
 idf.pkl
 invertedindex.pkl
 tfidf.pkl
+testing.ipynb
+GloVe
 /site
 
 # mypy

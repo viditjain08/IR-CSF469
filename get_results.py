@@ -123,8 +123,10 @@ def query_expansion(query, model):
             q_list.append(q)
             if q in train_data.keys():
                 temp=train_data[q]
-            else:
+            elif i in train_data.keys():
                 temp=train_data[i]
+            else:
+                return []
             if flag==0:
                 docs=temp
                 flag=1

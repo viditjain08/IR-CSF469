@@ -47,10 +47,10 @@ def normal_evaluation():
         print(float(ave_p)/(11*len(queries)))
 
 
-def embedding_evaluation():
+def embedding_evaluation(model):
     with open("corpora/reuters/cats.txt") as f:
         queries,docs=actual_results(f)
-        model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
+        # model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
         r_n5=0
         r_n10=0
         ave_p=float(0)

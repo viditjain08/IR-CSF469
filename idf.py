@@ -13,26 +13,41 @@ def tokenize(sentence,vocab):
     temp = pos_tag(word_tokenize(sentence.lower()))
     word_tokens=[]
     for i,j in temp:
-        if j[0].lower() in ['a','n','v']:
-            temp_i = wnl.lemmatize(i,j[0].lower())
-        else:
-            temp_i = wnl.lemmatize(i)
-        if i not in reuters.words("stopwords"):
-            if str(temp_i) not in word_tokens:
-                vocab.append(str(temp_i))
-            word_tokens.append(str(temp_i))
+        try:
+            if j[0].lower() in ['a','n','v']:
+                temp_i = wnl.lemmatize(i,j[0].lower())
+            else:
+                temp_i = wnl.lemmatize(i)
+            if i not in reuters.words("stopwords"):
+                if str(temp_i) not in word_tokens:
+                    vocab.append(str(temp_i))
+                word_tokens.append(str(temp_i))
+        except:
+            pass
     return collections.Counter(word_tokens)
 
 
 def get_idf():
 
-    # print(tokenize(s))
+    print(tokenize(s))
     os.chdir(os.path.join(os.getcwd(),"corpora/reuters/training"))
     l = os.listdir(os.getcwd())
     vocab = list()
     for i in l:
         tokenize(open(i).read(),vocab)
         # print i
-    with open("../../../idf.pkl", 'wb') as output:  # Overwrites any existing file.
+    os.chdir("../../..")
+    with open("idf_training.pkl", 'wb') as output:  # Overwrites any existing file.
         pickle.dump(collections.Counter(vocab), output)
-    print("Inverse Document Frequency built")
+    print("Inverse Document Frequency for training data built")
+
+    os.chdir(os.path.join(os.getcwd(),"corpora/reuters/test"))
+    l = os.listdir(os.getcwd())
+    vocab = list()
+    for i in l:
+        tokenize(open(i).read(),vocab)
+        # print i
+    os.chdir("../../..")
+    with open("idf_test.pkl", 'wb') as output:  # Overwrites any existing file.
+        pickle.dump(collections.Counter(vocab), output)
+    print("Inverse Document Frequency for testing data built")

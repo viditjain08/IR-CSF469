@@ -15,17 +15,24 @@ def tokenize(sentence):
     temp = pos_tag(word_tokenize(sentence.lower()))
     word_tokens=[]
     for i,j in temp:
-        if j[0].lower() in ['a','n','v']:
-            temp_i = wnl.lemmatize(i,j[0].lower())
-        else:
-            temp_i = wnl.lemmatize(i)
-        if i not in reuters.words("stopwords"):
-            word_tokens.append(str(temp_i))
+        try:
+            if j[0].lower() in ['a','n','v']:
+                temp_i = wnl.lemmatize(i,j[0].lower())
+            else:
+                temp_i = wnl.lemmatize(i)
+            if i not in reuters.words("stopwords"):
+                word_tokens.append(str(temp_i))
+        except:
+            pass
     return collections.Counter(word_tokens)
 
-def tfidf():
-    vocab = pickle.load(open("idf.pkl"))
-    os.chdir(os.path.join(os.getcwd(),"corpora/reuters/training"))
+def tfidf(test=False):
+    if test==False:
+        vocab = pickle.load(open("idf_training.pkl"))
+        os.chdir(os.path.join(os.getcwd(),"corpora/reuters/training"))
+    else:
+        vocab = pickle.load(open("idf_test.pkl"))
+        os.chdir(os.path.join(os.getcwd(),"corpora/reuters/test"))
     l = os.listdir(os.getcwd())
     invertedindex={}
     tf={}
@@ -49,12 +56,18 @@ def tfidf():
             print(count, "documents indexed")
         # print invertedindex
         # print tf
+    os.chdir("../../..")
     return invertedindex,tf
 def get_inverted_tfidf():
 
     # print(tokenize(s))
-    invertedindex,tf = tfidf()
-    with open("../../../invertedindex.pkl", 'wb') as output:  # Overwrites any existing file.
+    invertedindex,tf = tfidf(False)
+    with open("invertedindex_training.pkl", 'wb') as output:  # Overwrites any existing file.
         pickle.dump(invertedindex, output)
-    with open("../../../tfidf.pkl", 'wb') as output:  # Overwrites any existing file.
+    with open("tfidf_training.pkl", 'wb') as output:  # Overwrites any existing file.
+        pickle.dump(tf, output)
+    invertedindex,tf = tfidf(True)
+    with open("invertedindex_test.pkl", 'wb') as output:  # Overwrites any existing file.
+        pickle.dump(invertedindex, output)
+    with open("tfidf_test.pkl", 'wb') as output:  # Overwrites any existing file.
         pickle.dump(tf, output)

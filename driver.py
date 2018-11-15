@@ -28,14 +28,15 @@ if __name__ == "__main__":
             if query is None or len(query)==0:
                 print("Query cannot be empty")
                 continue
-            docs = gr.simple_results(query)
+            docs,words_used = gr.simple_results(query)
+            docs = gr.retrieve_results(docs,words_used)
             if docs==-1:
                 print("Some error occured")
                 continue
             if docs==[]:
                 print("No results found")
                 continue
-            gr.print_results(docs,query)
+            gr.print_results(docs)
         else:
             if flag==0:
                 print("May take 5 minutes")
@@ -47,11 +48,16 @@ if __name__ == "__main__":
                 print("Query cannot be empty")
                 continue
             added_vocab = gr.query_expansion(query, model)
-            docs = gr.simple_results(query,added_vocab[:2])
+            if added_vocab==-1 or added_vocab==None:
+                docs,words_used = gr.simple_results(query)
+            else:
+                docs,words_used = gr.simple_results(query,added_vocab)
+
+            docs = gr.retrieve_results(docs,words_used)
             if docs==-1:
                 print("Some error occured")
                 continue
             if docs==[]:
                 print("No results found")
                 continue
-            gr.print_results(docs,query)
+            gr.print_results(docs)

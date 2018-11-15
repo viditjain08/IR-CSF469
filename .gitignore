@@ -104,6 +104,7 @@ invertedindex.pkl
 tfidf.pkl
 testing.ipynb
 GloVe
+*.pkl
 /site
 
 # mypy

@@ -5,7 +5,7 @@ from nltk import word_tokenize, pos_tag
 from nltk.stem import WordNetLemmatizer
 import get_results as gr
 import evaluate as e
-
+import bloom_filter as bf
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk

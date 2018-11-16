@@ -89,10 +89,20 @@ def retrieve_results(docs, words_used, bloom = False):
                 pass
         results.append((score,doc))
     results = sorted(results,reverse=True)
-
+    if bloom==True:
+        temp=[]
+        if len(results)<6:
+            return [j for i,j in results]
+        for i,j in results[:10]:
+            for x,y in results[:10]:
+                t=list(tfidf[j].keys())
+                s=list(tfidf[y].keys())
+                temp.append((len(list(set(s).intersection(t))),j,y))
+        temp = sorted(temp,reverse=True)
+        temp_r = [j for i,j in results[:10]]
+        results.pop(temp_r.index(temp[0][2]))
     return [j for i,j in results]
 
-    return [j for i,j in results]
 
 def print_results(docs):
     for doc in docs[:20]:

@@ -41,7 +41,7 @@ class ButtonWindow(Gtk.Window):
 
         button2 = Gtk.Button.new_with_mnemonic("Generate Dict")
         button2.connect("clicked", self.on_open_clicked)
-        
+
         button3 = Gtk.Button.new_with_mnemonic("_Close")
         button3.connect("clicked", self.on_close_clicked)
 
@@ -59,14 +59,14 @@ class ButtonWindow(Gtk.Window):
         vbox_mid.pack_start(self.vbox_left, True, True, 0)
         vbox_mid.pack_start(self.vbox_mid_mid, False, True, 0)
         vbox_mid.pack_start(self.vbox_right, True, True, 0)
-        
+
         self.arx = []
         for x in range(10):
             self.arx.append(TitleButton("Result " + str(x+1)))
             self.vbox_mid_mid.pack_start(self.arx[x], True, True, 0)
         self.vbox_left.pack_start(Gtk.Label("\n\n"), True, True, 0)
         self.vbox_right.pack_start(Gtk.Label("\n\n"), True, True, 0)
-        
+
         hbox_top.pack_start(self.entry, False, True, 0)
         hbox_top.pack_end(self.check2, False, True, 0)
         hbox_top.pack_end(self.check1, False, True, 0)
@@ -108,7 +108,7 @@ class ButtonWindow(Gtk.Window):
         stringy = ''
 
         if self.check2.get_active():
-            Bloomify(docs).enabled(True)
+            docs = Bloomify(docs,words_used).enabled(True)
 
         if docs==[] or docs == -1:
             stringy = 'No results found'
@@ -163,13 +163,14 @@ class DialogExample(Gtk.Dialog):
 
 
 class Bloomify(object):
-    def __init__(self, docs):
+    def __init__(self, docs, words_used):
         self.docs = docs
+        self.words_used = words_used
         self.is_enabled = False
 
     def enabled(self, boole):
         self.is_enabled = boole
-        gr.retrieve_results(self.docs, [], bloom = True)
+        return gr.retrieve_results(self.docs, self.words_used, bloom = True)
 
 print("Loading Glove Vector Model of 5GB. This may take a while. Please wait")
 # model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")

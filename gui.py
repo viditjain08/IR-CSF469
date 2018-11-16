@@ -25,10 +25,10 @@ class ButtonWindow(Gtk.Window):
         self.add(vbox)
 
         hbox_top = Gtk.Box(spacing = 10)
-        hbox_mid = Gtk.Box(spacing = 20)
+        vbox_mid = Gtk.Box(spacing = 10)
         hbox_bottom = Gtk.Box(spacing = 4)
         vbox.pack_start(hbox_top, False, True, 0)
-        vbox.pack_start(hbox_mid, True, True, 0)
+        vbox.pack_start(vbox_mid, True, True, 0)
         vbox.pack_start(hbox_bottom, False, True, 0)
 
         self.entry = Gtk.Entry()
@@ -37,8 +37,6 @@ class ButtonWindow(Gtk.Window):
 
         button1 = Gtk.Button.new_with_label("Search")
         button1.connect("clicked", self.on_click_me_clicked)
-
-        self.empty_label = Gtk.Label("\n\n\n\n\n\n\n\n\n\n\n\n")
 
         button2 = Gtk.Button.new_with_mnemonic("Generate Dict")
         button2.connect("clicked", self.on_open_clicked)
@@ -52,26 +50,42 @@ class ButtonWindow(Gtk.Window):
         self.check1 = Gtk.CheckButton("Embedding Search")
         self.check2 = Gtk.CheckButton("Bloom Filter")
 
+        self.vbox_left = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
+        self.vbox_mid_mid = Gtk.Box(spacing = 15, orientation = Gtk.Orientation.VERTICAL)
+        self.vbox_mid_mid.set_size_request(500,500)
+        self.vbox_right = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
+        vbox_mid.pack_start(self.vbox_left, True, True, 0)
+        vbox_mid.pack_start(self.vbox_mid_mid, False, True, 0)
+        vbox_mid.pack_start(self.vbox_right, True, True, 0)
+        
+        self.vbox_left.pack_start(Gtk.Label("\n\n"), True, True, 0)
+        self.vbox_right.pack_start(Gtk.Label("\n\n"), True, True, 0)
+        
         hbox_top.pack_start(self.entry, False, True, 0)
         hbox_top.pack_end(self.check2, False, True, 0)
         hbox_top.pack_end(self.check1, False, True, 0)
         hbox_top.pack_end(button1, False, True, 0)
-        hbox_mid.pack_start(self.empty_label, True, True, 0)
+
         hbox_bottom.pack_end(button3, False, True, 0)
         hbox_bottom.pack_end(button2, False, True, 0)
         hbox_bottom.pack_end(button4, False, True, 0)
 
 
     def on_click_evaluation(self, button):
-        self.empty_label.set_text("This may take upto 5 minutes.\n Kindly wait")
+        stringy = "This may take upto 5 minutes.\n Press OK to continue"
+        x = DialogExample(self,stringy)
+        x.run()
+        x.destroy()
         stringy = "Evaluation for normal search\n" + e.normal_evaluation()
         stringy += "\nEvaluation for Embedding search\n" + e.embedding_evaluation(model)
-        self.empty_label.set_text(stringy)
+        x = DialogExample(self,stringy)
+        x.run()
+        x.destroy()
 
     def on_click_me_clicked(self, button):
         global model
         if self.check1.get_active():
-            query=str(input())
+            query=self.entry.get_text()
             added_vocab = gr.query_expansion(query, model)
             if added_vocab==-1 or added_vocab==None:
                 docs,words_used = gr.simple_results(query)
@@ -89,21 +103,50 @@ class ButtonWindow(Gtk.Window):
     
         if docs==[] or docs == -1:
             stringy = 'No results found'
+            x = DialogExample(self,stringy)
+            x.run()
+            x.destroy()
         else:
             for doc in range(len(docs[:10])):
                 f=open("corpora/reuters/test/"+docs[doc])
                 stringy += str(doc+1) + ". " + f.readline() + '\n'
-        self.empty_label.set_text(stringy)
 
     def on_open_clicked(self, button):
-        self.empty_label.set_text("Started generating dictionary\n It may take upto 2 hours\n\n This is not required if the existing .pkl files provided are used")
-        idf.get_idf()
-        invi.get_inverted_tfidf()
-        empty_label.set_text("Dictionary successfuly generated")
+        x = DialogExample(self, "It may take upto 2 hours\n\n This is not required if the existing .pkl files provided are used.\n Press OK to continue, cancel to stop")
+        resp = x.run()
+        x.destroy()
+        if resp == Gtk.ResponseType.OK:
+            idf.get_idf()
+            invi.get_inverted_tfidf()
+            x = DialogExample(self, "Dictionary successfuly generated")
+            x.run()
+            x.destroy()
+
+
 
     def on_close_clicked(self, button):
-        print("Closing application")
         Gtk.main_quit()
+
+class TitleButton(Gtk.Button):
+    def dialog(self, parent, labelval):
+        dialog = DialogExample(parent, labelval)
+        dialog.run()
+        dialog.destroy()
+
+class DialogExample(Gtk.Dialog):
+
+    def __init__(self, parent, labelval):
+        Gtk.Dialog.__init__(self, "My Dialog", parent, 0,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+             Gtk.STOCK_OK, Gtk.ResponseType.OK))
+
+        self.set_default_size(150, 100)
+
+        label = Gtk.Label(labelval)
+
+        box = self.get_content_area()
+        box.add(label)
+        self.show_all()
 
 
 class Bloomify(object):
@@ -113,12 +156,12 @@ class Bloomify(object):
 
     def enabled(self, boole):
         self.is_enabled = boole
-        gr.retrieve_results(docs, bloom = True)
+        gr.retrieve_results(self.docs, [], bloom = True)
 
 print("Loading Glove Vector Model of 5GB. This may take a while. Please wait")
-model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
+# model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
 win = ButtonWindow()
-win.resize(700,500)
+win.resize(800,600)
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
 Gtk.main()

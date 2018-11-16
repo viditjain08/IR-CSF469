@@ -1,4 +1,9 @@
 ## Installation
 
-Make a directory named "GloVe" and extract the text file from "http://nlp.stanford.edu/data/glove.42B.300d.zip" in that folder
-Run python driver.py for options. Either download the required files or make them using option 1 in driver.
+sudo apt-get install python3-gi gir1.2-gtk-3.0<br />
+pip install nltk numpy PyGObject<br />
+python<br />
+nltk.download('reuters')<br />
+nltk.download('wordnet')<br />
+exit()<br />
+python driver.py<br />

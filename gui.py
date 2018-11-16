@@ -173,7 +173,7 @@ class Bloomify(object):
         return gr.retrieve_results(self.docs, self.words_used, bloom = True)
 
 print("Loading Glove Vector Model of 5GB. This may take a while. Please wait")
-# model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
+model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
 win = ButtonWindow()
 win.resize(800,600)
 win.connect("destroy", Gtk.main_quit)

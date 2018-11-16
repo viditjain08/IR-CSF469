@@ -20,6 +20,7 @@ class ButtonWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Button Demo")
         self.set_border_width(10)
+        self.arx = []
 
         vbox = Gtk.Box(spacing=4, orientation = Gtk.Orientation.VERTICAL)
         self.add(vbox)
@@ -54,10 +55,15 @@ class ButtonWindow(Gtk.Window):
         self.vbox_mid_mid = Gtk.Box(spacing = 15, orientation = Gtk.Orientation.VERTICAL)
         self.vbox_mid_mid.set_size_request(500,500)
         self.vbox_right = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
+
         vbox_mid.pack_start(self.vbox_left, True, True, 0)
         vbox_mid.pack_start(self.vbox_mid_mid, False, True, 0)
         vbox_mid.pack_start(self.vbox_right, True, True, 0)
         
+        self.arx = []
+        for x in range(10):
+            self.arx.append(TitleButton("Result " + str(x+1)))
+            self.vbox_mid_mid.pack_start(self.arx[x], True, True, 0)
         self.vbox_left.pack_start(Gtk.Label("\n\n"), True, True, 0)
         self.vbox_right.pack_start(Gtk.Label("\n\n"), True, True, 0)
         
@@ -100,7 +106,7 @@ class ButtonWindow(Gtk.Window):
 
         if self.check2.get_active():
             Bloomify(docs).enabled(True)
-    
+
         if docs==[] or docs == -1:
             stringy = 'No results found'
             x = DialogExample(self,stringy)
@@ -108,11 +114,13 @@ class ButtonWindow(Gtk.Window):
             x.destroy()
         else:
             for doc in range(len(docs[:10])):
-                f=open("corpora/reuters/test/"+docs[doc])
-                stringy += str(doc+1) + ". " + f.readline() + '\n'
+                stringy = str(doc+1) + ". " + open("corpora/reuters/test/"+docs[doc]).readline()
+                self.arx[doc].set_label(stringy)
+                self.arx[doc].dialog(self, open("corpora/reuters/test/"+docs[doc]).read())
+                self.arx[doc].connect("clicked", self.arx[doc].dialogrun)
 
     def on_open_clicked(self, button):
-        x = DialogExample(self, "It may take upto 2 hours\n\n This is not required if the existing .pkl files provided are used.\n Press OK to continue, cancel to stop")
+        x = DialogExample(self, "It may take upto 2 hours\n\n This is not required if the existing .pkl files provided are used.\n Press OK to continue")
         resp = x.run()
         x.destroy()
         if resp == Gtk.ResponseType.OK:
@@ -123,22 +131,24 @@ class ButtonWindow(Gtk.Window):
             x.destroy()
 
 
-
     def on_close_clicked(self, button):
         Gtk.main_quit()
 
 class TitleButton(Gtk.Button):
     def dialog(self, parent, labelval):
-        dialog = DialogExample(parent, labelval)
-        dialog.run()
-        dialog.destroy()
+        self.parent = parent
+        self.labelval = labelval
+
+    def dialogrun(self, button):
+        self.dialog = DialogExample(self.parent, self.labelval)
+        self.dialog.run()
+        self.dialog.destroy()
 
 class DialogExample(Gtk.Dialog):
 
     def __init__(self, parent, labelval):
         Gtk.Dialog.__init__(self, "My Dialog", parent, 0,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-             Gtk.STOCK_OK, Gtk.ResponseType.OK))
+            (Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
         self.set_default_size(150, 100)
 

@@ -39,12 +39,14 @@ def normal_evaluation():
                 r_n10+=rprecision(doc_res,docs[q],10)
                 for i in range(1,12):
                     ave_p+=(float(rprecision(doc_res,docs[q],i))/float(i))
-        print("P@5: "),
-        print(float(r_n5)/(5*len(queries)))
-        print("P@10: "),
-        print(float(r_n10)/(10*len(queries)))
-        print("MAP: ")
-        print(float(ave_p)/(11*len(queries)))
+        stringy = ''
+        stringy += str("P@5: ") + '\n'
+        stringy += str(float(r_n5)/(5*len(queries))) + '\n'
+        stringy += str("P@10: ") + '\n'
+        stringy += str(float(r_n10)/(10*len(queries))) + '\n'
+        stringy += str("MAP: ") + '\n'
+        stringy += str(float(ave_p)/(11*len(queries))) + '\n'
+        return stringy
 
 
 def embedding_evaluation(model):
@@ -68,9 +70,12 @@ def embedding_evaluation(model):
                 r_n10+=rprecision(doc_res,docs[q],10)
                 for i in range(1,12):
                     ave_p+=(float(rprecision(doc_res,docs[q],i))/float(i))
-        print("P@5: "),
-        print(float(r_n5)/(5*len(queries)))
-        print("P@10: "),
-        print(float(r_n10)/(10*len(queries)))
-        print("MAP: ")
-        print(float(ave_p)/(11*len(queries)))
+        stringy = ''
+        
+        stringy += str("P@5: ") + '\n'
+        stringy += str(float(r_n5)/(5*len(queries))) + '\n'
+        stringy += str("P@10: ") + '\n'
+        stringy += str(float(r_n10)/(10*len(queries))) + '\n'
+        stringy += str("MAP: ") + '\n'
+        stringy += str(float(ave_p)/(11*len(queries))) + '\n'
+        return stringy

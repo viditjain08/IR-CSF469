@@ -75,7 +75,7 @@ def simple_results(query,added_vocab=None):
             return l,words_used
         return l,words_used
 
-def retrieve_results(docs, words_used):
+def retrieve_results(docs, words_used, bloom = False):
     results=[]
     wnl = WordNetLemmatizer()
     tfidf = pickle.load(open("tfidf_test.pkl","rb"))

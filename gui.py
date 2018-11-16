@@ -14,7 +14,6 @@ from gi.repository import Gtk
 
 option=0
 wnl = WordNetLemmatizer()
-flag=0
 
 class ButtonWindow(Gtk.Window):
 
@@ -70,12 +69,8 @@ class ButtonWindow(Gtk.Window):
         self.empty_label.set_text(stringy)
 
     def on_click_me_clicked(self, button):
-        global flag
+        global model
         if self.check1.get_active():
-            if flag==0:
-                self.empty_label.set_text("May take 5 minutes")
-                model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
-            flag=1
             query=str(input())
             added_vocab = gr.query_expansion(query, model)
             if added_vocab==-1 or added_vocab==None:
@@ -120,6 +115,8 @@ class Bloomify(object):
         self.is_enabled = boole
         gr.retrieve_results(docs, bloom = True)
 
+print("Loading Glove Vector Model of 5GB. This may take a while. Please wait")
+model = gr.loadGloveModel("GloVe/glove.42B.300d.txt")
 win = ButtonWindow()
 win.resize(700,500)
 win.connect("destroy", Gtk.main_quit)

@@ -90,6 +90,9 @@ class ButtonWindow(Gtk.Window):
 
     def on_click_me_clicked(self, button):
         global model
+        for doc in range(10):
+            self.arx[doc].set_label("Result " + str(doc+1))
+
         if self.check1.get_active():
             query=self.entry.get_text()
             added_vocab = gr.query_expansion(query, model)
